@@ -20,6 +20,7 @@ public class BuddyBehaviour : MonoBehaviour {
     [SerializeField] private Animator _anim;
     [SerializeField] private LayerMask _laserVisionMask;
     [SerializeField] private Renderer _renderer;
+    [SerializeField] private float _playerFollowStopDistance;
 
     static private BuddyBehaviour _instance;
     private NavMeshAgent _navAgent;
@@ -27,6 +28,11 @@ public class BuddyBehaviour : MonoBehaviour {
     private float _raycast_distance;
     private BuddyStates _state;
     private Rigidbody _rigidBody;
+    private bool _followingPlayer;
+    private float _baseStopDistance;
+    private NavMeshPath _pathChecker;
+    private GameManager _gameManager;
+    private HarmlessNPC _chasedRabbit;
 
     private int _isRunningHash = Animator.StringToHash("IsRunning");
     private int _isStoppedHash = Animator.StringToHash("IsStopped");
@@ -57,17 +63,23 @@ public class BuddyBehaviour : MonoBehaviour {
         _rigidBody = GetComponent<Rigidbody>();
         _player = PlayerBehaviour.Instance;
         _raycast_distance = GameManager.Instance.MAX_RAYCAST_DISTANCE;
+        _baseStopDistance = _navAgent.stoppingDistance;
+        _pathChecker = new NavMeshPath();
+        _gameManager = GameManager.Instance;
+
         SetBuddyStopped(true);
 	}
 
     private void OnEnable()
     {
         EventManager.OnLaserStateToggle += OnLaserStateToggle;
+        EventManager.OnRabbitSafe += OnRabbitSafe;
     }
 
     private void OnDisable()
     {
         EventManager.OnLaserStateToggle -= OnLaserStateToggle;
+        EventManager.OnRabbitSafe -= OnRabbitSafe;
     }
 
     // Update is called once per frame
@@ -75,14 +87,29 @@ public class BuddyBehaviour : MonoBehaviour {
         switch(_state)
         {
             case BuddyStates.Normal:
+
+                if (CheckRabbits())
+                    break;
+
                 if (_player.LaserIsOn)
                 {
                     TryFollowLaserPointer();
                 }
-
+                else if (_followingPlayer)
+                {
+                    GoToDestination(_player.transform.position, true, true);
+                }
                 break;
 
             case BuddyStates.Hold:
+
+                if (CheckRabbits())
+                {
+                    _player.CancelHold();
+                    EndThrow(false);
+                    break;
+                }
+
                 transform.position = _player.BuddyHolder.position;
                 transform.eulerAngles = _player.BuddyHolder.eulerAngles;
                 break;
@@ -91,6 +118,7 @@ public class BuddyBehaviour : MonoBehaviour {
                 break;
 
             case BuddyStates.Chasing:
+                GoToDestination(_chasedRabbit.transform.position, true);
                 break;
 
             default:
@@ -103,6 +131,16 @@ public class BuddyBehaviour : MonoBehaviour {
     {
         if(isOn == false)
         {
+            SetBuddyStopped(true);
+        }
+    }
+
+    private void OnRabbitSafe(HarmlessNPC rabbit)
+    {
+        if(rabbit == _chasedRabbit)
+        {
+            ChangeBuddyState(BuddyStates.Normal);
+            _chasedRabbit = null;
             SetBuddyStopped(true);
         }
     }
@@ -121,31 +159,40 @@ public class BuddyBehaviour : MonoBehaviour {
             }
             else
             {
-                IsDestinationVisible(destination);
+                if(IsObjectVisible(destination, "Laser"))
+                    GoToDestination(destination, false);
             }
         }
     }
 
-    private void IsDestinationVisible(Vector3 laserHit)
+    private bool IsObjectVisible(Vector3 laserHit, string tag)
     {
         RaycastHit hit;
         Vector3 direction = (laserHit - _raycastOrigin.position).normalized;
         if (Physics.Raycast(_raycastOrigin.position, direction, out hit, _raycast_distance, _laserVisionMask))
         {
-            if(hit.collider.tag == "Laser")
+            if(hit.collider.tag == tag)
             {
-                GoToDestination(hit.point, false);
+                return true;
             }
-            else
-            {
-                Debug.Log("Buddy doesn't see the Laser Pointer because of object : " + hit.collider.name);
-                // Add a reaction to not seeing the dot ? Currently, nothing.
-            }
+
+            Debug.DrawRay(_raycastOrigin.position, direction * 20);
+            // Add a reaction to not seeing the dot ? Currently, nothing.
+            return false;
         }
+
+        return false;
     }
 
-    private void GoToDestination(Vector3 dest, bool running)
+    private void GoToDestination(Vector3 dest, bool running, bool following = false)
     {
+        // If a destination is set for buddy, he will stop following the player, except when the variable "following" is specified
+        if(following == false)
+        {
+            _followingPlayer = false;
+            _navAgent.stoppingDistance = _baseStopDistance;
+        }
+
         _navAgent.SetDestination(dest);
 
         // Check if Buddy is close enougth to the his destination.
@@ -167,6 +214,26 @@ public class BuddyBehaviour : MonoBehaviour {
         {
             _navAgent.speed = _walkSpeed;
             _anim.SetBool(_isRunningHash, false);
+        }
+    }
+
+    /// <summary>
+    /// Checks if a navmesh path to the player is available, otherwise, the follow request is cancelled
+    /// </summary>
+    /// <param name="dest">Destination to test</param>
+    /// <returns>If a path is available the function returns true, otherwise is returns false.</returns>
+    private bool CheckPathAvailable(Vector3 dest)
+    {
+        _navAgent.CalculatePath(_player.transform.position, _pathChecker);
+        if(_pathChecker.status == NavMeshPathStatus.PathComplete)
+        {
+            Debug.Log("Path complete");
+            return true;
+        }
+        else
+        {
+            Debug.Log("Path incomplete");
+            return false;
         }
     }
 
@@ -194,17 +261,52 @@ public class BuddyBehaviour : MonoBehaviour {
         _state = newState;
     }
 
-    public void StartHold()
-    {
-        Debug.Log("Start Holding buddy");
-        ChangeBuddyState(BuddyStates.Hold);
-        _navAgent.enabled = false;
-        // rigid body kinematic ?
-    }
-
     private void OnCollisionEnter(Collision collision)
     {
-        Debug.Log("Collision : " + collision.collider.name);
+        if(_state == BuddyStates.Thrown && collision.collider.tag == "Floor")
+        {
+            EndThrow();
+        }
+    }
+
+    private void EndThrow(bool changeState = true)
+    {
+        Debug.Log("Buddy : End throw");
+        _navAgent.enabled = true;
+
+        if(changeState)
+            ChangeBuddyState(BuddyStates.Normal);
+    }
+
+    private bool CheckRabbits()
+    {
+        foreach (HarmlessNPC rabbit in _gameManager.ActiveRoom.RabbitList)
+        {
+            if (rabbit.IsSafe == false && IsObjectVisible(rabbit.transform.position, "Rabbit"))
+            {
+                Debug.Log("RABBIT VISIBLE");
+                StartChasingRabbit(rabbit);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private void StartChasingRabbit(HarmlessNPC rabbit)
+    {
+        _chasedRabbit = rabbit;
+        ChangeBuddyState(BuddyStates.Chasing);
+    }
+
+    public void StartHold()
+    {
+        if (_state == BuddyStates.Normal)
+        {
+            Debug.Log("Start Holding buddy");
+            ChangeBuddyState(BuddyStates.Hold);
+            _navAgent.enabled = false;
+        }
     }
 
     public void ApplyThrow(Vector3 force)
@@ -212,6 +314,15 @@ public class BuddyBehaviour : MonoBehaviour {
         ChangeBuddyState(BuddyStates.Thrown);
         _rigidBody.velocity = Vector3.zero;
         _rigidBody.AddForce(force, ForceMode.Impulse);
+    }
+
+    public void TryFollowPlayer()
+    {
+        if(_state == BuddyStates.Normal && CheckPathAvailable(_player.transform.position))
+        {
+            _followingPlayer = true;
+            _navAgent.stoppingDistance = _playerFollowStopDistance;
+        }
     }
     #endregion
 }

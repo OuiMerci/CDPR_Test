@@ -7,6 +7,9 @@ TagManager:
   - Buddy
   - Laser
   - Mirror
+  - Floor
+  - Activable
+  - Rabbit
   layers:
   - Default
   - TransparentFX
@@ -20,9 +23,9 @@ TagManager:
   - Player
   - Buddy
   - LaserImpact
-  - 
-  - 
-  - 
+  - NPC
+  - ActivableZone
+  - NPCTrigger
   - 
   - 
   - 

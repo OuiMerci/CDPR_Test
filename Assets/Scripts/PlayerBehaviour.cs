@@ -12,11 +12,10 @@ public class PlayerBehaviour : MonoBehaviour {
     [SerializeField] private float _buddyHoldMaxDistance; // Maximum distance at which the player can start holding Buddy
     [SerializeField] private float _buddyThrowForce; // Maximum distance at which the player can start holding Buddy
 
-    const float LASER_MAX_DISTANCE = 100;
     private static PlayerBehaviour _instance;
     private bool _laserIsOn = false;
     private Camera _cam = null;
-    private float _raycast_distance;
+    private float _raycastDistance;
     private BuddyBehaviour _buddy;
     private bool _isHoldingBuddy;
 
@@ -55,7 +54,7 @@ public class PlayerBehaviour : MonoBehaviour {
         //_laserPointerMask = ~(1 << 9);
         _buddy = BuddyBehaviour.Instance;
         _cam = Camera.main;
-        _raycast_distance = GameManager.Instance.MAX_RAYCAST_DISTANCE;
+        _raycastDistance = GameManager.Instance.MAX_RAYCAST_DISTANCE;
 	}
 	
 	// Update is called once per frame
@@ -84,7 +83,6 @@ public class PlayerBehaviour : MonoBehaviour {
     public bool RequestLaserRaycast(out Vector3 destination, out bool isHittingBuddy)
     {
         RaycastHit resultHit;
-        bool validImpactPoint = GetImpactPoint(out resultHit);
 
         if(GetImpactPoint(out resultHit))
         {
@@ -115,7 +113,7 @@ public class PlayerBehaviour : MonoBehaviour {
 
         // Raycast to get what the laser is touching
         RaycastHit hit;
-        if (Physics.Raycast(_cam.transform.position, _cam.transform.forward, out hit, LASER_MAX_DISTANCE, _laserPointerMask))
+        if (Physics.Raycast(_cam.transform.position, _cam.transform.forward, out hit, _raycastDistance, _laserPointerMask))
         {
             // Check if the laser hits the mirror, if yes, we use another raycast to compute the reflection hit
             if (hit.collider.tag == "Mirror")
@@ -126,7 +124,7 @@ public class PlayerBehaviour : MonoBehaviour {
                 Debug.DrawRay(_cam.transform.position, _cam.transform.forward * 10, Color.red);
 
                 // The new raycast, going from the mirror, in the direction of the reflection
-                if (Physics.Raycast(hit.point, reflectDirection, out hitReflect, LASER_MAX_DISTANCE, _laserPointerMask))
+                if (Physics.Raycast(hit.point, reflectDirection, out hitReflect, _raycastDistance, _laserPointerMask))
                 {
                     // Overwrite the laser pointer position, the light is now coming from the mirror
                     _laserPointer.position = hit.point;
@@ -175,6 +173,19 @@ public class PlayerBehaviour : MonoBehaviour {
         //Debug.DrawRay(_buddyHolder.position, throwForce, Color.red, 60);
         _isHoldingBuddy = false;
         _buddy.ApplyThrow(throwForce);
+    }
+
+    public void CancelHold()
+    {
+        _isHoldingBuddy = false;
+    }
+
+    // Ask Buddy to follow the player
+    public void CallBuddy()
+    {
+        // add sound here
+        _buddy.TryFollowPlayer();
+        Debug.Log("CALLING BUDDY");
     }
 
 

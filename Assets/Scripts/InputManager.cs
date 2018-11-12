@@ -23,6 +23,7 @@ public class InputManager : MonoBehaviour {
             case GameManager.GameStates.Playing:
                 CheckLaserInput();
                 CheckHoldThrowInput();
+                CheckCallInput();
                 break;
 
             case GameManager.GameStates.Pause:
@@ -63,6 +64,15 @@ public class InputManager : MonoBehaviour {
                 _player.TryStartHoldBuddy();
             }
             
+        }
+    }
+
+    private void CheckCallInput()
+    {
+        if (Input.GetButtonDown("CallBuddy"))
+        {
+            // Try to start buddy follow Logic
+            _player.CallBuddy();
         }
     }
 }

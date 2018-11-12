@@ -10,6 +10,9 @@ public class EventManager : MonoBehaviour
 
     public delegate void LaserStateToggle(bool isOn);
     public static event LaserStateToggle OnLaserStateToggle;
+
+    public delegate void RabbitSafeEvent(HarmlessNPC rabbit);
+    public static event RabbitSafeEvent OnRabbitSafe;
     #endregion
 
     #region Properties
@@ -28,7 +31,14 @@ public class EventManager : MonoBehaviour
 
     static public void FireLaserStateEvent(bool isOn)
     {
-        OnLaserStateToggle(isOn);
+        if(OnLaserStateToggle != null) //Make sure the event has at least one listener
+            OnLaserStateToggle(isOn);
+    }
+
+    static public void FireRabbitSafeEvent(HarmlessNPC rabbit)
+    {
+        if (OnRabbitSafe != null) //Make sure the event has at last one listener
+            OnRabbitSafe(rabbit);
     }
     #endregion
 
