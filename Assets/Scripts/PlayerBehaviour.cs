@@ -16,8 +16,9 @@ public class PlayerBehaviour : MonoBehaviour {
     private bool _laserIsOn = false;
     private Camera _cam = null;
     private float _raycastDistance;
-    private BuddyBehaviour _buddy;
+    private List<BuddyBehaviour> _buddyList;
     private bool _isHoldingBuddy;
+    private BuddyBehaviour _heldBuddy;
 
     #endregion Fields
 
@@ -52,7 +53,7 @@ public class PlayerBehaviour : MonoBehaviour {
     // Use this for initialization
     void Start () {
         //_laserPointerMask = ~(1 << 9);
-        _buddy = BuddyBehaviour.Instance;
+        _buddyList = new List<BuddyBehaviour>();
         _cam = Camera.main;
         _raycastDistance = GameManager.Instance.MAX_RAYCAST_DISTANCE;
 	}
@@ -155,24 +156,40 @@ public class PlayerBehaviour : MonoBehaviour {
 
     public void TryStartHoldBuddy()
     {
-        Debug.Log("Try Start Holding buddy");
-        float currentDistance = Vector3.Distance(transform.position, _buddy.transform.position);
+        BuddyBehaviour buddyToHold = null; ;
+        float shortestDistance = _buddyHoldMaxDistance + 1;
+        Debug.Log("Try Start Holding a buddy");
 
-        if(_buddy.IsVisible && currentDistance <= _buddyHoldMaxDistance)
+        foreach(BuddyBehaviour buddy in _buddyList)
+        {
+            if (buddy.IsVisible)
+            {
+                float distanceFromPlayer = Vector3.Distance(transform.position, buddy.transform.position);
+
+                if(distanceFromPlayer < shortestDistance)
+                {
+                    Debug.Log("New close buddy found");
+                    shortestDistance = distanceFromPlayer;
+                    buddyToHold = buddy;
+                }
+            }
+        }
+
+        if(buddyToHold != null)
         {
             _isHoldingBuddy = true;
-            _buddy.StartHold();
+            _heldBuddy = buddyToHold;
+            _heldBuddy.StartHold();
         }
     }
 
     public void ThrowBuddy()
     {
         Vector3 throwForce = _cam.transform.forward * _buddyThrowForce;
-        Debug.Log("ThrowForce : " + throwForce + " cam forward : " + _cam.transform.forward.normalized + " budduTF : " + _buddyThrowForce);
-        Debug.DrawRay(_buddyHolder.position, _cam.transform.forward, Color.green, 60);
-        //Debug.DrawRay(_buddyHolder.position, throwForce, Color.red, 60);
+
         _isHoldingBuddy = false;
-        _buddy.ApplyThrow(throwForce);
+        _heldBuddy.ApplyThrow(throwForce);
+        _heldBuddy = null; //We're not holding anyone now, Reset _heldBuddy value
     }
 
     public void CancelHold()
@@ -180,14 +197,25 @@ public class PlayerBehaviour : MonoBehaviour {
         _isHoldingBuddy = false;
     }
 
-    // Ask Buddy to follow the player
+    // Ask Buddies to follow the player
     public void CallBuddy()
     {
         // add sound here
-        _buddy.TryFollowPlayer();
-        Debug.Log("CALLING BUDDY");
+        foreach (BuddyBehaviour buddy in _buddyList)
+        {
+            buddy.TryFollowPlayer();
+        }
     }
 
+    public void AddNewBuddy(BuddyBehaviour buddy)
+    {
+        _buddyList.Add(buddy);
+    }
+
+    public void RemoveBuddy(BuddyBehaviour buddy)
+    {
+        _buddyList.Remove(buddy);
+    }
 
     #endregion
 }

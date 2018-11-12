@@ -7,7 +7,6 @@ public class GameRoom : MonoBehaviour {
     #region Fields
     [SerializeField] private List<HarmlessNPC> _rabbitList;
     [SerializeField] private Transform _playerSpawn;
-    [SerializeField] private Transform _buddySpawn;
     #endregion
 
     #region Properties
@@ -22,9 +21,6 @@ public class GameRoom : MonoBehaviour {
     {
         PlayerBehaviour.Instance.transform.position = _playerSpawn.position;
         PlayerBehaviour.Instance.transform.eulerAngles = _playerSpawn.eulerAngles;
-
-        BuddyBehaviour.Instance.transform.position = _buddySpawn.position;
-        BuddyBehaviour.Instance.transform.eulerAngles = _buddySpawn.eulerAngles;
     }
     #endregion
 }
