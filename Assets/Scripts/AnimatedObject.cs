@@ -1,18 +1,24 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class Door : ActivableObject {
+public class AnimatedObject : ActivableObject {
 
     #region Fields
     [SerializeField] private Collider _coll;
+    [SerializeField] private NavMeshObstacle _navObstacle;
+    [SerializeField] private bool _disableCollOnActivation;
+    [SerializeField] private string _activateAnim;
+    [SerializeField] private string _deactivateAnim;
+    [SerializeField] private bool _carvOnDeactivate; // When deactivated, this object cuts out the navmesh, path become available when activated
 
     private Animator _anim;
     private bool _animated;
-    private int _closeHash = Animator.StringToHash("Door_close");
-    private int _openHash = Animator.StringToHash("Door_open");
-    private int _animSwapToOpen = Animator.StringToHash("swapAnimToOpen");
-    private int _animSwapToClose = Animator.StringToHash("swapAnimToClose");
+    private int _deactivateHash; // Use hash to avoid using a string, for optimisation
+    private int _activateHash;
+    private int _animSwapToActivated = Animator.StringToHash("swapAnimToActivate");
+    private int _animSwapToDeactivated = Animator.StringToHash("swapAnimToDeactivate");
     #endregion
 
     #region Methods
@@ -20,13 +26,10 @@ public class Door : ActivableObject {
     void Start ()
     {
         _anim = GetComponent<Animator>();
-	}
-	
-	// Update is called once per frame
-	void Update ()
-    {
-		
-	}
+        _deactivateHash = Animator.StringToHash(_deactivateAnim);
+        _activateHash = Animator.StringToHash(_activateAnim);
+        _navObstacle = GetComponent<NavMeshObstacle>();
+    }
 
     // These are use to avoid animaton clipping if activating/deactivating and object before the anim is over
     public void ActivationAnimEndEvent()
@@ -54,15 +57,19 @@ public class Door : ActivableObject {
         // Do not interrupt the "door close" anim
         if (_animated)
         {
-            _anim.SetTrigger(_animSwapToOpen);
+            _anim.SetTrigger(_animSwapToActivated);
         }
         else
         {
             _animated = true;
-            _anim.Play(_openHash);
+            _anim.Play(_activateHash);
         }
 
-        _coll.enabled = false;
+        if(_disableCollOnActivation)
+            _coll.enabled = false;
+
+        if (_carvOnDeactivate)
+            _navObstacle.carving = false;
     }
 
     public override void Deactivate()
@@ -74,15 +81,19 @@ public class Door : ActivableObject {
         if (_animated)
         {
             Debug.Log("Swap anims !!!");
-            _anim.SetTrigger(_animSwapToClose);
+            _anim.SetTrigger(_animSwapToDeactivated);
         }
         else
         {
             _animated = true;
-            _anim.Play(_closeHash);
+            _anim.Play(_deactivateHash);
         }
 
-        _coll.enabled = true;
+        if (_disableCollOnActivation)
+            _coll.enabled = true;
+
+        if (_carvOnDeactivate)
+            _navObstacle.carving = true;
     }
     #endregion
 }

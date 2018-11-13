@@ -35,7 +35,7 @@ public class BuddyBehaviour : MonoBehaviour {
     private GameManager _gameManager;
     private HarmlessNPC _chasedRabbit; // Used to store the instance of a followed rabbit
 
-    private int _isRunningHash = Animator.StringToHash("IsRunning");
+    private int _isRunningHash = Animator.StringToHash("IsRunning"); // Use hash to avoid using a string, for optimisation
     private int _isStoppedHash = Animator.StringToHash("IsStopped");
     #endregion
 

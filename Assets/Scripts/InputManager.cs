@@ -24,6 +24,7 @@ public class InputManager : MonoBehaviour {
                 CheckLaserInput();
                 CheckHoldThrowInput();
                 CheckCallInput();
+                CheckCheatCodes();
                 break;
 
             case GameManager.GameStates.Pause:
@@ -73,6 +74,35 @@ public class InputManager : MonoBehaviour {
         {
             // Try to start buddy follow Logic
             _player.CallBuddy();
+        }
+    }
+
+    private void CheckCheatCodes()
+    {
+        if (Input.GetKeyDown("1"))
+        {
+            // Teleport to room 1
+            _gameManager.TeleportToRoom(0);
+        }
+        else if (Input.GetKeyDown("2"))
+        {
+            // Teleport to room 2
+            _gameManager.TeleportToRoom(1);
+        }
+        else if (Input.GetKeyDown("3"))
+        {
+            // Teleport to room 3
+            _gameManager.TeleportToRoom(2);
+        }
+        else if (Input.GetKeyDown("4"))
+        {
+            // Teleport to room 4
+            _gameManager.TeleportToRoom(3);
+        }
+        else if (Input.GetKeyDown("5"))
+        {
+            // Teleport to room 5
+            _gameManager.TeleportToRoom(4);
         }
     }
 }

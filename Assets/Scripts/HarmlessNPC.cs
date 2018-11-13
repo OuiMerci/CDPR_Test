@@ -10,7 +10,7 @@ public class HarmlessNPC : ActivableObject {
     [SerializeField] private Transform _deactivatedDestination;
     private Animator _anim;
     private NavMeshAgent _navAgent;
-    private int _moveHash = Animator.StringToHash("Move");
+    private int _moveHash = Animator.StringToHash("Move"); // Use hash to avoid using a string, for optimisation
     private bool _moving;
     private bool _isSafe;
 
