@@ -182,12 +182,13 @@ public class BuddyBehaviour : MonoBehaviour {
         Vector3 direction = (laserHit - _raycastOrigin.position).normalized;
         if (Physics.Raycast(_raycastOrigin.position, direction, out hit, _raycast_distance, _laserVisionMask))
         {
-            if(hit.collider.tag == tag)
+            //Debug.DrawRay(_raycastOrigin.position, direction * 20);
+            Debug.DrawLine(_raycastOrigin.position, hit.point, Color.red);
+            Debug.Log("Buddy saw the object : " + hit.collider.name + "From parent : " + hit.collider.transform.parent.name + " and was looking for : " + tag);
+            if (hit.collider.tag == tag)
             {
                 return true;
             }
-
-            Debug.DrawRay(_raycastOrigin.position, direction * 20);
             // Add a reaction to not seeing the dot ? Currently, nothing.
             return false;
         }

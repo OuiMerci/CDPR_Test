@@ -88,5 +88,12 @@ public class GameManager : MonoBehaviour {
         Debug.Log("Teleporting to room : " + roomIndex);
         _roomList[roomIndex].TeleportCharacters();
     }
+
+    public void TeleportToNextRoom()
+    {
+        Debug.Log("Teleporting to next room : ");
+        _activeRoomIndex++;
+        _roomList[_activeRoomIndex].TeleportCharacters();
+    }
     #endregion
 }

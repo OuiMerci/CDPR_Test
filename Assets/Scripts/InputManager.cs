@@ -79,7 +79,12 @@ public class InputManager : MonoBehaviour {
 
     private void CheckCheatCodes()
     {
-        if (Input.GetKeyDown("1"))
+        if (Input.GetButtonDown("NextRoom"))
+        {
+            // Teleport to next room
+            _gameManager.TeleportToNextRoom();
+        }
+        else if (Input.GetKeyDown("1"))
         {
             // Teleport to room 1
             _gameManager.TeleportToRoom(0);
@@ -103,6 +108,11 @@ public class InputManager : MonoBehaviour {
         {
             // Teleport to room 5
             _gameManager.TeleportToRoom(4);
+        }
+        else if (Input.GetKeyDown("6"))
+        {
+            // Teleport to room 5
+            _gameManager.TeleportToRoom(5);
         }
     }
 }

@@ -41,6 +41,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         private float m_NextStep;
         private bool m_Jumping;
         private AudioSource m_AudioSource;
+        private PlayerBehaviour _playerBehaviour;  // My modification to this : the player should not be able to jump while holding a buddy
 
         // Use this for initialization
         private void Start()
@@ -55,6 +56,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
             m_Jumping = false;
             m_AudioSource = GetComponent<AudioSource>();
 			m_MouseLook.Init(transform , m_Camera.transform);
+            _playerBehaviour = PlayerBehaviour.Instance;
         }
 
 
@@ -63,7 +65,7 @@ namespace UnityStandardAssets.Characters.FirstPerson
         {
             RotateView();
             // the jump state needs to read here to make sure it is not missed
-            if (!m_Jump)
+            if (!m_Jump && _playerBehaviour.IsHoldingBuddy == false)
             {
                 m_Jump = CrossPlatformInputManager.GetButtonDown("Jump");
             }

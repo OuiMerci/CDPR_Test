@@ -11,11 +11,12 @@ public class AnimatedObject : ActivableObject {
     [SerializeField] private bool _disableCollOnActivation;
     [SerializeField] private string _activateAnim;
     [SerializeField] private string _deactivateAnim;
-    [SerializeField] private bool _carvOnDeactivate; // When deactivated, this object cuts out the navmesh, path become available when activated
+    [SerializeField] private bool _deactivateObstacle; // When deactivated, this object cuts out the navmesh, path become available when activated
+    [SerializeField] private bool _swapAnimations; // Simply swap the activate/deactivate animations. I should also add an easy way to set the initial state, but won't have time for that prototype. :(
 
     private Animator _anim;
     private bool _animated;
-    private int _deactivateHash; // Use hash to avoid using a string, for optimisation
+    private int _deactivateHash; // Using hash is faster than using a string
     private int _activateHash;
     private int _animSwapToActivated = Animator.StringToHash("swapAnimToActivate");
     private int _animSwapToDeactivated = Animator.StringToHash("swapAnimToDeactivate");
@@ -23,12 +24,20 @@ public class AnimatedObject : ActivableObject {
 
     #region Methods
     // Use this for initialization
-    void Start ()
+    void Start()
     {
         _anim = GetComponent<Animator>();
-        _deactivateHash = Animator.StringToHash(_deactivateAnim);
-        _activateHash = Animator.StringToHash(_activateAnim);
-        _navObstacle = GetComponent<NavMeshObstacle>();
+
+        if (_swapAnimations)
+        {
+            _deactivateHash = Animator.StringToHash(_activateAnim);
+            _activateHash = Animator.StringToHash(_deactivateAnim);
+        }
+        else
+        {
+            _deactivateHash = Animator.StringToHash(_deactivateAnim);
+            _activateHash = Animator.StringToHash(_activateAnim);
+        }
     }
 
     // These are use to avoid animaton clipping if activating/deactivating and object before the anim is over
@@ -68,8 +77,11 @@ public class AnimatedObject : ActivableObject {
         if(_disableCollOnActivation)
             _coll.enabled = false;
 
-        if (_carvOnDeactivate)
-            _navObstacle.carving = false;
+        if (_deactivateObstacle)
+        {
+            // if the animations are swapped, we also need to swap the enabled state for the obstacle
+            _navObstacle.enabled = _swapAnimations ? true : false;
+        }
     }
 
     public override void Deactivate()
@@ -92,8 +104,12 @@ public class AnimatedObject : ActivableObject {
         if (_disableCollOnActivation)
             _coll.enabled = true;
 
-        if (_carvOnDeactivate)
-            _navObstacle.carving = true;
+        if (_deactivateObstacle)
+        {
+            // if the animations are swapped, we also need to swap the enabled state for the obstacle
+            _navObstacle.enabled = _swapAnimations ? false: true;
+        }
+            
     }
     #endregion
 }

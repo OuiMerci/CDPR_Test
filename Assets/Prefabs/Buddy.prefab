@@ -1254,10 +1254,10 @@ MonoBehaviour:
   _anim: {fileID: 95656638830952780}
   _laserVisionMask:
     serializedVersion: 2
-    m_Bits: 71991
+    m_Bits: 203063
   _renderer: {fileID: 137034528056613088}
   _playerFollowStopDistance: 1.5
-  _tempDrag: 0
+  _tempDrag: 2
 --- !u!136 &136292727631990300
 CapsuleCollider:
   m_ObjectHideFlags: 1

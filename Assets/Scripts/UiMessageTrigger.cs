@@ -13,9 +13,15 @@ public class UiMessageTrigger : MonoBehaviour {
     private bool _activationCanceled; // Sometimes, we only want to display a tip if the player doesn't find the solution
     private int _currentMessageIndex = 0;
     private GameObject _currentMessage;
+    private Collider _coll;
     #endregion
 
     #region Methods
+    private void Start()
+    {
+        _coll = GetComponent<Collider>();
+    }
+
     private void ActivateMessage()
     {
         _currentMessage = _messageList[_currentMessageIndex];
@@ -52,6 +58,8 @@ public class UiMessageTrigger : MonoBehaviour {
         {
             ActivateMessage();
         }
+
+        _coll.enabled = false;
     }
     #endregion
 }
