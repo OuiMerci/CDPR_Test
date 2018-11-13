@@ -26,7 +26,6 @@ public class ActivableZone : ActivableObject {
 
     private void OnTriggerExit(Collider other)
     {
-        Debug.Log("Exit my trigger : " + other.name);
         UpdateActivationPoints(-1);
     }
 
@@ -35,7 +34,6 @@ public class ActivableZone : ActivableObject {
         if(_activated == false) // Only activate if it's deactivated
         {
             base.Activate();
-            Debug.Log("ZONE ACTIVATED");
 
             if (_disableOnActivation)
                 gameObject.SetActive(false);
@@ -47,7 +45,6 @@ public class ActivableZone : ActivableObject {
         if(_activated == true) // Only deactivate if it's activated
         {
             base.Deactivate();
-            Debug.Log("ZONE DEACTIVATED");
         }
     }
     #endregion

@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class BuddyBehaviour : MonoBehaviour {
+public class BuddyBehaviour : Character {
 
     #region Fields
     private enum BuddyStates
@@ -183,8 +183,6 @@ public class BuddyBehaviour : MonoBehaviour {
         if (Physics.Raycast(_raycastOrigin.position, direction, out hit, _raycast_distance, _laserVisionMask))
         {
             //Debug.DrawRay(_raycastOrigin.position, direction * 20);
-            Debug.DrawLine(_raycastOrigin.position, hit.point, Color.red);
-            Debug.Log("Buddy saw the object : " + hit.collider.name + "From parent : " + hit.collider.transform.parent.name + " and was looking for : " + tag);
             if (hit.collider.tag == tag)
             {
                 return true;
@@ -204,6 +202,12 @@ public class BuddyBehaviour : MonoBehaviour {
     /// <param name="following"></param>
     private void GoToDestination(Vector3 dest, bool running, bool following = false)
     {
+        if (_navAgent.enabled == false)
+        {
+            Debug.Log("GoToDestination -> navAgent is disabled");
+            return;
+        }
+
         ResetDrag();
 
         // If a destination is set for buddy, he will stop following the player, except when the variable "following" is specified
@@ -247,12 +251,10 @@ public class BuddyBehaviour : MonoBehaviour {
         _navAgent.CalculatePath(_player.transform.position, _pathChecker);
         if(_pathChecker.status == NavMeshPathStatus.PathComplete)
         {
-            Debug.Log("Path complete");
             return true;
         }
         else
         {
-            Debug.Log("Path incomplete");
             return false;
         }
     }
@@ -280,6 +282,12 @@ public class BuddyBehaviour : MonoBehaviour {
     /// <param name="isStopped"></param>
     private void SetBuddyStopped(bool isStopped)
     {
+        if (_navAgent.enabled == false)
+        {
+            Debug.Log("SetBuddyStopped -> navAgent is disabled");
+            return;
+        }
+
         _navAgent.isStopped = isStopped;
         _anim.SetBool(_isStoppedHash, isStopped);
     }
@@ -295,9 +303,16 @@ public class BuddyBehaviour : MonoBehaviour {
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(_state == BuddyStates.Thrown && collision.collider.tag == "Floor")
+        if(_state == BuddyStates.Thrown)
         {
-            EndThrow();
+            if(collision.collider.tag == "Floor")
+            {
+                EndThrow();
+            }
+            else if(collision.collider.tag == "BlockTop")
+            {
+                EndThrow(true, false);
+            }
         }
     }
 
@@ -305,10 +320,10 @@ public class BuddyBehaviour : MonoBehaviour {
     /// Reset variable for going back to the normal state
     /// </summary>
     /// <param name="changeState"></param>
-    private void EndThrow(bool changeState = true)
+    private void EndThrow(bool changeState = true, bool _activateNavagent = true)
     {
         Debug.Log("Buddy : End throw");
-        _navAgent.enabled = true;
+        _navAgent.enabled = _activateNavagent;
         _rigidBody.drag = _tempDrag;
 
         if(changeState)
@@ -393,6 +408,18 @@ public class BuddyBehaviour : MonoBehaviour {
             _followingPlayer = true;
             _navAgent.stoppingDistance = _playerFollowStopDistance;
         }
+    }
+
+    public override void StartFollowBlockMovement()
+    {
+        base.StartFollowBlockMovement();
+        _navAgent.enabled = false;
+    }
+
+    public override void EndFollowBlockMovement()
+    {
+        base.EndFollowBlockMovement();
+        _navAgent.enabled = true;
     }
     #endregion
 }

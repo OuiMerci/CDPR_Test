@@ -75,7 +75,17 @@ public class AnimatedObject : ActivableObject {
         }
 
         if(_disableCollOnActivation)
-            _coll.enabled = false;
+        {
+            if(_swapAnimations)
+            {
+                _coll.enabled = true;
+            }
+            else
+            {
+                _coll.enabled = false;
+            }
+        }
+            
 
         if (_deactivateObstacle)
         {
@@ -102,7 +112,16 @@ public class AnimatedObject : ActivableObject {
         }
 
         if (_disableCollOnActivation)
-            _coll.enabled = true;
+        {
+            if (_swapAnimations)
+            {
+                _coll.enabled = false;
+            }
+            else
+            {
+                _coll.enabled = true;
+            }
+        }
 
         if (_deactivateObstacle)
         {

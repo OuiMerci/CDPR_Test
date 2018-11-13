@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerBehaviour : MonoBehaviour {
+public class PlayerBehaviour : Character {
 
     #region Fields
     [SerializeField] private Transform _laserPointer; //Used to update, the laser that controls the pet's position
@@ -19,6 +19,7 @@ public class PlayerBehaviour : MonoBehaviour {
     private List<BuddyBehaviour> _buddyList;
     private bool _isHoldingBuddy;
     private BuddyBehaviour _heldBuddy;
+    private bool _onMovingBlock;
 
     #endregion Fields
 
@@ -42,6 +43,7 @@ public class PlayerBehaviour : MonoBehaviour {
     {
         get { return _buddyHolder; }
     }
+
     #endregion
 
     #region Methods
@@ -217,5 +219,10 @@ public class PlayerBehaviour : MonoBehaviour {
         _buddyList.Remove(buddy);
     }
 
+    public void StartMovingBlock()
+    {
+        _onMovingBlock = true;
+        //_rigidbody.isKinematic = true;
+    }
     #endregion
 }

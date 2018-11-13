@@ -10,6 +10,7 @@ TagManager:
   - Floor
   - Activable
   - Rabbit
+  - BlockTop
   layers:
   - Default
   - TransparentFX
@@ -29,7 +30,7 @@ TagManager:
   - PlayerOnlyTrigger
   - Pallet
   - LaserViewBlocker
-  - 
+  - SlidingBlock
   - 
   - 
   - 

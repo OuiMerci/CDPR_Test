@@ -12,8 +12,9 @@ public class NPCTriggerZone : MonoBehaviour {
     #region Methods
     private void OnTriggerEnter(Collider other)
     {
-        if(_checkZoneEnter)
+        if(_checkZoneEnter && _npc.CharactersToCheck.Contains(other.gameObject) == false)
         {
+            Debug.Log("enter zone : " + other.name);
             _npc.UpdateActivationPoints(+1);
             _npc.CharactersToCheck.Add(other.gameObject);
         }
@@ -21,9 +22,12 @@ public class NPCTriggerZone : MonoBehaviour {
 
     private void OnTriggerExit(Collider other)
     {
+        Debug.Log("exit zone : " + other.name);
+
         // Only update the activation points if the character activated the other trigger before
         if (_checkZoneEnter == false && _npc.CharactersToCheck.Contains(other.gameObject))
         {
+            Debug.Log("exit zone +++ : " + other.name);
             _npc.UpdateActivationPoints(-1);
             _npc.CharactersToCheck.Remove(other.gameObject);
         }

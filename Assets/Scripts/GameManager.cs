@@ -43,7 +43,7 @@ public class GameManager : MonoBehaviour {
                 return _roomList[_activeRoomIndex];
             else
             {
-                Debug.LogWarning("Trying to access ActiveRoom, but index is out of range.");
+                //Debug.LogWarning("Trying to access ActiveRoom, but index is out of range.");
                 return null;
             }
         }
