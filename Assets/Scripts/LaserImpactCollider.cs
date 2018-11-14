@@ -5,7 +5,7 @@ using UnityEngine;
 public class LaserImpactCollider : MonoBehaviour {
 
     #region Fields
-    private Collider _collider;
+    private Collider _collider; //The collider used by buddies to check if the laser impact is visible
     #endregion
 
     #region Methods
@@ -18,7 +18,7 @@ public class LaserImpactCollider : MonoBehaviour {
 
     private void OnEnable()
     {
-        EventManager.OnLaserStateToggle += EnableCollider;
+        EventManager.OnLaserStateToggle += EnableCollider; //Activate the collider or not depending on events
     }
 
     private void OnDisable()

@@ -5,11 +5,11 @@ public abstract class ActivableObject : MonoBehaviour
 {
     #region Fields
     [SerializeField] protected ActivableObject[] _linkedObjects;  //List of the objects that will be activated by this one
-    [SerializeField] protected bool _disableParentsOnActivation;
+    [SerializeField] protected bool _disableParentsOnActivation;  //If (_activationPoinyNeeded > 1), the parents don't know when to deactivate themselves
     [SerializeField] protected ActivableObject[] _parentObjects; //List of the objects that activate this one
-    [SerializeField] protected bool _activated;
-    [SerializeField] protected int _activationPointNeeded;
-    [SerializeField] protected int _activationPoints;
+    [SerializeField] protected bool _activated; //Is this object activated ?
+    [SerializeField] protected int _activationPointNeeded; // the amount of points this object need to be activated
+    [SerializeField] protected int _activationPoints; //the amount of point this object currently has
 
     private bool _previousState;
     #endregion
@@ -33,6 +33,10 @@ public abstract class ActivableObject : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Used to add or remove points to this object
+    /// </summary>
+    /// <param name="change"></param>
     public void UpdateActivationPoints(int change)
     {
         _activationPoints += change;
@@ -40,6 +44,9 @@ public abstract class ActivableObject : MonoBehaviour
         UpdateStatus();
     }
 
+    /// <summary>
+    /// Used when the amount of point has changed, checks if it activated or deactivated the object
+    /// </summary>
     void UpdateStatus()
     {
         if (_activationPoints >= _activationPointNeeded)
@@ -52,6 +59,10 @@ public abstract class ActivableObject : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// (unused) Check if the status has changed.
+    /// </summary>
+    /// <returns></returns>
     protected bool CheckStatusChange()
     {
         if (_previousState == _activated)
@@ -63,11 +74,19 @@ public abstract class ActivableObject : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// (unused) Set a specific amount of points
+    /// </summary>
+    /// <param name="value"></param>
     protected void SetActivationPoints(int value)
     {
         _activationPoints = value;
     }
 
+    /// <summary>
+    /// Update the amount of point the "linked objects" have
+    /// </summary>
+    /// <param name="value"></param>
     public void UpdateLinkedObjects(int value)
     {
         foreach (ActivableObject child in _linkedObjects)
@@ -86,6 +105,9 @@ public abstract class ActivableObject : MonoBehaviour
         _activated = b;
     }
 
+    /// <summary>
+    /// Start the activation logic for this object.
+    /// </summary>
     public virtual void Activate()
     {
         _activated = true;
@@ -104,6 +126,9 @@ public abstract class ActivableObject : MonoBehaviour
         }
     }
 
+    /// <summary>
+    /// Start the deactivation logic for this object.
+    /// </summary>
     public virtual void Deactivate()
     {
         _activated = false;

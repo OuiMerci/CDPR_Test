@@ -6,8 +6,8 @@ using UnityEngine.AI;
 public class HarmlessNPC : ActivableObject {
 
     #region Fields
-    [SerializeField] private Transform _activatedDestination;
-    [SerializeField] private Transform _deactivatedDestination;
+    [SerializeField] private Transform _activatedDestination; // Where this npc goes on activation
+    [SerializeField] private Transform _deactivatedDestination; // Where this npc goes on deactivation
     private Animator _anim;
     private NavMeshAgent _navAgent;
     private int _moveHash = Animator.StringToHash("Move"); // Use hash to avoid using a string, for optimisation
@@ -42,12 +42,15 @@ public class HarmlessNPC : ActivableObject {
 	
 	// Update is called once per frame
 	void Update () {
-        if(_moving)
+        if(_moving) //when this npc is moving, we constantly check if the destination is reached, as it is needed to free chasing buddies 
         {
             CheckDestinationReached();
         }
 	}
 
+    /// <summary>
+    /// Check if destination is reached, if yes, fire an event
+    /// </summary>
     private void CheckDestinationReached()
     {
         if (Vector3.Distance(_navAgent.destination, _navAgent.transform.position) <= _navAgent.stoppingDistance)
@@ -66,6 +69,10 @@ public class HarmlessNPC : ActivableObject {
         }
     }
 
+    /// <summary>
+    /// Set the destination for this NPC
+    /// </summary>
+    /// <param name="dest"></param>
     private void GoToDestination(Vector3 dest)
     {
         _navAgent.SetDestination(dest);
@@ -73,6 +80,9 @@ public class HarmlessNPC : ActivableObject {
         _moving = true;
     }
 
+    /// <summary>
+    /// Does the activation logic for this NPC
+    /// </summary>
     public override void Activate()
     {
         if(_activated == false)
@@ -82,6 +92,9 @@ public class HarmlessNPC : ActivableObject {
         }
     }
 
+    /// <summary>
+    /// Does the deactivation logic for this NPC
+    /// </summary>
     public override void Deactivate()
     {
         if (_activated == true)
@@ -92,11 +105,19 @@ public class HarmlessNPC : ActivableObject {
         }
     }
 
+    /// <summary>
+    /// Add a character to the list of characters that triggered this NPC
+    /// </summary>
+    /// <param name="character"></param>
     public void AddCharacterToList(GameObject character)
     {
         _charactersToCheck.Add(character);
     }
 
+    /// <summary>
+    /// Check if a character triggered this rabbit and hasn't left yet
+    /// </summary>
+    /// <param name="character"></param>
     public bool IsCharacterInList(GameObject character)
     {
         return _charactersToCheck.Contains(character);

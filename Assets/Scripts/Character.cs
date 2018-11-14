@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Character : MonoBehaviour {
 
-    protected bool _isOnMovingBlock;
+    protected bool _isOnMovingBlock; // may be used for specific "isOnMovingBlock" check
 
     //Called when a sliding bloc starts moving
     public virtual void StartFollowBlockMovement()

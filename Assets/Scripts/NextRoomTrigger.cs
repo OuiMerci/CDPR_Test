@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class NextRoomTrigger : MonoBehaviour {
 
-    [SerializeField] private int _roomId;
+    [SerializeField] private int _roomId; //The new room ID
 
     private void OnTriggerEnter(Collider other)
     {

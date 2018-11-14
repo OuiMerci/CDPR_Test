@@ -8,17 +8,17 @@ public class AnimatedObject : ActivableObject {
     #region Fields
     [SerializeField] private Collider _coll;
     [SerializeField] private NavMeshObstacle _navObstacle;
-    [SerializeField] private bool _disableCollOnActivation;
-    [SerializeField] private string _activateAnim;
-    [SerializeField] private string _deactivateAnim;
+    [SerializeField] private bool _disableCollOnActivation; // Wether or not the collider must be disable on activation
+    [SerializeField] private string _activateAnim; // Name of the activation animation
+    [SerializeField] private string _deactivateAnim; // Name of the deactivation animation
     [SerializeField] private bool _deactivateObstacle; // When deactivated, this object cuts out the navmesh, path become available when activated
     [SerializeField] private bool _swapAnimations; // Simply swap the activate/deactivate animations. I should also add an easy way to set the initial state, but won't have time for that prototype. :(
 
     private Animator _anim;
     private bool _animated;
-    private int _deactivateHash; // Using hash is faster than using a string
+    private int _deactivateHash; // Using a hash is faster than using a string
     private int _activateHash;
-    private int _animSwapToActivated = Animator.StringToHash("swapAnimToActivate");
+    private int _animSwapToActivated = Animator.StringToHash("swapAnimToActivate"); //use the string to get a hash for the animation
     private int _animSwapToDeactivated = Animator.StringToHash("swapAnimToDeactivate");
     #endregion
 
@@ -28,6 +28,7 @@ public class AnimatedObject : ActivableObject {
     {
         _anim = GetComponent<Animator>();
 
+        // if the animations need to be swapped, we do it when computing the hashes
         if (_swapAnimations)
         {
             _deactivateHash = Animator.StringToHash(_activateAnim);
@@ -59,9 +60,12 @@ public class AnimatedObject : ActivableObject {
         }
     }
 
+    /// <summary>
+    /// Does the activation logic for this item
+    /// </summary>
     public override void Activate()
     {
-        base.Activate();
+        base.Activate(); // Call the function from the parent class
 
         // Do not interrupt the "door close" anim
         if (_animated)
@@ -74,7 +78,7 @@ public class AnimatedObject : ActivableObject {
             _anim.Play(_activateHash);
         }
 
-        if(_disableCollOnActivation)
+        if(_disableCollOnActivation) // if needed, disable the colliders
         {
             if(_swapAnimations)
             {
@@ -94,15 +98,16 @@ public class AnimatedObject : ActivableObject {
         }
     }
 
+    /// <summary>
+    /// Does the deactivation logic for this object
+    /// </summary>
     public override void Deactivate()
     {
-        Debug.Log("Door deactivated");
         base.Deactivate();
 
         // Do not interrupt the "door open" animation
         if (_animated && !_disableParentsOnActivation)
         {
-            Debug.Log("Swap anims !!!");
             _anim.SetTrigger(_animSwapToDeactivated);
         }
         else
@@ -111,7 +116,7 @@ public class AnimatedObject : ActivableObject {
             _anim.Play(_deactivateHash);
         }
 
-        if (_disableCollOnActivation)
+        if (_disableCollOnActivation) // if needed, disable the colliders
         {
             if (_swapAnimations)
             {

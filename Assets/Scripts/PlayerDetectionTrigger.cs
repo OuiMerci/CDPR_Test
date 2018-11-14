@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PlayerDetectionTrigger : MonoBehaviour {
 
-    [SerializeField] private BuddyBehaviour _buddy;
+    [SerializeField] private BuddyBehaviour _buddy; // The buddy linked to this zone
 
     private void OnTriggerEnter(Collider other)
     {

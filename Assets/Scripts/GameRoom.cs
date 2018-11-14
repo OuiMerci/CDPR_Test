@@ -5,9 +5,9 @@ using UnityEngine;
 public class GameRoom : MonoBehaviour {
 
     #region Fields
-    [SerializeField] private List<HarmlessNPC> _rabbitList;
-    [SerializeField] private Transform _playerSpawn;
-    [SerializeField] private List<Transform> _buddySpawns;
+    [SerializeField] private List<HarmlessNPC> _rabbitList; // Stores the list of rabbits in this room, used by buddies to know what buddies to raycast to
+    [SerializeField] private Transform _playerSpawn; // Where the player is spawned when using a cheat code
+    [SerializeField] private List<Transform> _buddySpawns; // Where buddies are spawned when using a cheat code
     private GameObject _buddyPrefab;
     #endregion
 
@@ -24,6 +24,9 @@ public class GameRoom : MonoBehaviour {
         _buddyPrefab = GameManager.Instance.BuddyPrefab;
     }
 
+    /// <summary>
+    /// Cheat code for faster testing
+    /// </summary>
     public void TeleportCharacters()
     {
         PlayerBehaviour.Instance.transform.position = _playerSpawn.position;

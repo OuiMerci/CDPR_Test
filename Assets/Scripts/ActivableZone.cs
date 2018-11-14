@@ -5,27 +5,20 @@ using UnityEngine;
 public class ActivableZone : ActivableObject {
 
     #region Fields
-    [SerializeField] private bool _disableOnActivation;
+    [SerializeField] private bool _disableOnActivation; // Is this a one-time use only zone ?
     #endregion
 
     #region Methods
-    // Use this for initialization
-    void Start () {
-		
-	}
-	
-	private void OnActivation()
-    {
-        Debug.Log("Object activated : " + gameObject.name);
-    }
 
     private void OnTriggerEnter(Collider other)
     {
+        // When a character enters the trigger, adds a point
         UpdateActivationPoints(+1);
     }
 
     private void OnTriggerExit(Collider other)
     {
+        // When a character leaves the trigger, adds a point
         UpdateActivationPoints(-1);
     }
 

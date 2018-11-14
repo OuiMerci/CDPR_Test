@@ -18,7 +18,7 @@ public class SlidingBlock : ActivableObject {
     #endregion
 
     #region Properties
-    public List<Character> CharactersOnTop
+    public List<Character> CharactersOnTop //List of character that need to be moved along with the block
     {
         get { return _charactersOnTop; }
     }
@@ -102,6 +102,7 @@ public class SlidingBlock : ActivableObject {
             posDifference = new Vector3(0, - _speed * Time.deltaTime, 0);
         }
 
+        // if there are characters on top of that block, move them too
         foreach(Character character in _charactersOnTop)
         {
             character.transform.position += posDifference;
@@ -109,6 +110,7 @@ public class SlidingBlock : ActivableObject {
         transform.position += posDifference;
     }
 
+    // free the characters on top of that block
     private void EndMovement(bool up)
     {
         _moving = false;

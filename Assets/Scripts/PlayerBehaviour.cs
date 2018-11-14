@@ -12,18 +12,18 @@ public class PlayerBehaviour : Character {
     [SerializeField] private float _buddyHoldMaxDistance; // Maximum distance at which the player can start holding Buddy
     [SerializeField] private float _buddyThrowForce; // How far will the player throw Buddy
     [SerializeField] private GameObject _laserDisplay; // The sphere that is used, in the end, to display the laser's impact
-    [SerializeField] private float _laserDisplaySizeRatio = 0;
-    [SerializeField] private AudioSource _secondaryAudio;
-    [SerializeField] private AudioClip _whistle;
+    [SerializeField] private float _laserDisplaySizeRatio = 0; //used to change the size of the sphere depending on its distance, for more consistancy
+    [SerializeField] private AudioSource _secondaryAudio; // the audioSource component
+    [SerializeField] private AudioClip _whistle; // The sound used when calling buddies back
 
 
     private static PlayerBehaviour _instance;
     private bool _laserIsOn = false;
     private Camera _cam = null;
     private float _raycastDistance;
-    private List<BuddyBehaviour> _buddyList;
+    private List<BuddyBehaviour> _buddyList; //The list of buddies linked to this character
     private bool _isHoldingBuddy;
-    private BuddyBehaviour _heldBuddy;
+    private BuddyBehaviour _heldBuddy; // The buddy that is currently being held by the player
     private bool _onMovingBlock;
 
     #endregion Fields
@@ -75,6 +75,9 @@ public class PlayerBehaviour : Character {
         Debug.DrawRay(_cam.transform.position, _cam.transform.forward * 50);
 	}
 
+    /// <summary>
+    /// Update the position of the laser pointer impact.
+    /// </summary>
     public void UpdateLaserPointer()
     {
         // Update the spotlight position
@@ -131,6 +134,11 @@ public class PlayerBehaviour : Character {
         return false;        
     }
 
+    /// <summary>
+    /// Do a raycast to compute the position of the laser pointer impact
+    /// </summary>
+    /// <param name="resultHit"></param>
+    /// <returns></returns>
     private bool GetImpactPoint(out RaycastHit resultHit)
     {
         // initialize out value
@@ -169,12 +177,19 @@ public class PlayerBehaviour : Character {
         return false;
     }
 
+    /// <summary>
+    /// Ask the audioSource to play a sound
+    /// </summary>
+    /// <param name="clip"></param>
     private void PlaySound(AudioClip clip)
     {
         _secondaryAudio.clip = clip;
         _secondaryAudio.Play();
     }
 
+    /// <summary>
+    /// Used when the laser pointer input isn't pressed anymore
+    /// </summary>
     public void TurnOffLaserPointer()
     {
         if(LaserIsOn == true)
@@ -184,10 +199,13 @@ public class PlayerBehaviour : Character {
         }
     }
 
+    /// <summary>
+    /// Start logic for holding a buddy
+    /// </summary>
     public void TryStartHoldBuddy()
     {
         BuddyBehaviour buddyToHold = null; ;
-        float shortestDistance = _buddyHoldMaxDistance + 1;
+        float shortestDistance = _buddyHoldMaxDistance + 1; // check the distance to find the closest buddy if more than one are visible
 
         foreach(BuddyBehaviour buddy in _buddyList)
         {
@@ -203,7 +221,7 @@ public class PlayerBehaviour : Character {
             }
         }
 
-        if(buddyToHold != null)
+        if(buddyToHold != null) // if a buddy was found, carry him
         {
             _isHoldingBuddy = true;
             _heldBuddy = buddyToHold;
@@ -211,6 +229,9 @@ public class PlayerBehaviour : Character {
         }
     }
 
+    /// <summary>
+    /// Applies a force to the buddy currently held
+    /// </summary>
     public void ThrowBuddy()
     {
         Vector3 throwForce = _cam.transform.forward * _buddyThrowForce;
@@ -220,6 +241,9 @@ public class PlayerBehaviour : Character {
         _heldBuddy = null; //We're not holding anyone now, Reset _heldBuddy value
     }
 
+    /// <summary>
+    /// Cancel "hold" of a buddy, called when a buddy sees a rabbit
+    /// </summary>
     public void CancelHold()
     {
         _isHoldingBuddy = false;
@@ -234,6 +258,7 @@ public class PlayerBehaviour : Character {
             buddy.TryFollowPlayer();
         }
     }
+
 
     public void AddNewBuddy(BuddyBehaviour buddy)
     {

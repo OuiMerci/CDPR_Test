@@ -5,7 +5,7 @@ using UnityEngine;
 public class LaserPointer : MonoBehaviour {
 
     #region Fields
-    [SerializeField] private GameObject _laserDisplay;
+    [SerializeField] private GameObject _laserDisplay; // Object that represents the laser impact
     private Light _light;
     private PlayerBehaviour _player;
     #endregion
@@ -20,7 +20,7 @@ public class LaserPointer : MonoBehaviour {
 
     private void OnEnable()
     {
-        EventManager.OnLaserStateToggle += ShowLaser;
+        EventManager.OnLaserStateToggle += ShowLaser; //Show Laser or not depending on events
     }
 
     private void OnDisable()

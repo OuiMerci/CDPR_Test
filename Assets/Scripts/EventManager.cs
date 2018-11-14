@@ -8,10 +8,10 @@ public class EventManager : MonoBehaviour
     #region Fields
     private static EventManager _instance;
 
-    public delegate void LaserStateToggle(bool isOn);
+    public delegate void LaserStateToggle(bool isOn); // laser pointer events
     public static event LaserStateToggle OnLaserStateToggle;
 
-    public delegate void RabbitSafeEvent(HarmlessNPC rabbit);
+    public delegate void RabbitSafeEvent(HarmlessNPC rabbit); // rabbit chased events
     public static event RabbitSafeEvent OnRabbitSafe;
     #endregion
 
