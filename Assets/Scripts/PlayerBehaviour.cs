@@ -11,8 +11,10 @@ public class PlayerBehaviour : Character {
     [SerializeField] private LayerMask _laserPointerMask; // We use this to avoid collision with the player's capsule or the laserImpactCollider
     [SerializeField] private float _buddyHoldMaxDistance; // Maximum distance at which the player can start holding Buddy
     [SerializeField] private float _buddyThrowForce; // How far will the player throw Buddy
-    [SerializeField] private GameObject _laserDisplay;
+    [SerializeField] private GameObject _laserDisplay; // The sphere that is used, in the end, to display the laser's impact
     [SerializeField] private float _laserDisplaySizeRatio = 0;
+    [SerializeField] private AudioSource _secondaryAudio;
+    [SerializeField] private AudioClip _whistle;
 
 
     private static PlayerBehaviour _instance;
@@ -167,6 +169,12 @@ public class PlayerBehaviour : Character {
         return false;
     }
 
+    private void PlaySound(AudioClip clip)
+    {
+        _secondaryAudio.clip = clip;
+        _secondaryAudio.Play();
+    }
+
     public void TurnOffLaserPointer()
     {
         if(LaserIsOn == true)
@@ -220,7 +228,7 @@ public class PlayerBehaviour : Character {
     // Ask Buddies to follow the player
     public void CallBuddy()
     {
-        // add sound here
+        PlaySound(_whistle);
         foreach (BuddyBehaviour buddy in _buddyList)
         {
             buddy.TryFollowPlayer();
