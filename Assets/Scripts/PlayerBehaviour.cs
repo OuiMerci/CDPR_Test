@@ -10,7 +10,10 @@ public class PlayerBehaviour : Character {
     [SerializeField] private Transform _buddyHolder; // The transforms that controls the position and orientation of buddy while we hold it
     [SerializeField] private LayerMask _laserPointerMask; // We use this to avoid collision with the player's capsule or the laserImpactCollider
     [SerializeField] private float _buddyHoldMaxDistance; // Maximum distance at which the player can start holding Buddy
-    [SerializeField] private float _buddyThrowForce; // Maximum distance at which the player can start holding Buddy
+    [SerializeField] private float _buddyThrowForce; // How far will the player throw Buddy
+    [SerializeField] private GameObject _laserDisplay;
+    [SerializeField] private float _laserDisplaySizeRatio = 0;
+
 
     private static PlayerBehaviour _instance;
     private bool _laserIsOn = false;
@@ -44,6 +47,11 @@ public class PlayerBehaviour : Character {
         get { return _buddyHolder; }
     }
 
+    public GameObject LaserDisplaySphere
+    {
+        get { return _laserDisplay; }
+    }
+
     #endregion
 
     #region Methods
@@ -67,8 +75,20 @@ public class PlayerBehaviour : Character {
 
     public void UpdateLaserPointer()
     {
-        _laserPointer.position = _cam.transform.position;
-        _laserPointer.eulerAngles = _cam.transform.eulerAngles;
+        // Update the spotlight position
+        // (As is makes the other lights very buggy for me, the light comopnent is disabled. I replaced it by an ugly red sphere.)
+        //_laserPointer.position = _cam.transform.position;
+        //_laserPointer.eulerAngles = _cam.transform.eulerAngles;
+
+        // Update the sphere position, no more light bugs, but much more raycast requests
+        Vector3 dest = Vector3.zero;
+        bool hittingBuddy = false;
+        RequestLaserRaycast(out dest, out hittingBuddy);
+
+        _laserDisplay.transform.position = dest;
+        float sizeRatio = Vector3.Distance(transform.position, _laserDisplay.transform.position) * _laserDisplaySizeRatio;
+
+        _laserDisplay.transform.localScale = new Vector3 (sizeRatio, sizeRatio, sizeRatio);
 
         if (_laserIsOn == false)
         {
@@ -130,8 +150,8 @@ public class PlayerBehaviour : Character {
                 if (Physics.Raycast(hit.point, reflectDirection, out hitReflect, _raycastDistance, _laserPointerMask))
                 {
                     // Overwrite the laser pointer position, the light is now coming from the mirror
-                    _laserPointer.position = hit.point;
-                    _laserPointer.forward = reflectDirection;
+                    //_laserPointer.position = hit.point;
+                    //_laserPointer.forward = reflectDirection;
 
                     resultHit = hitReflect;
                     return true;
@@ -160,7 +180,6 @@ public class PlayerBehaviour : Character {
     {
         BuddyBehaviour buddyToHold = null; ;
         float shortestDistance = _buddyHoldMaxDistance + 1;
-        Debug.Log("Try Start Holding a buddy");
 
         foreach(BuddyBehaviour buddy in _buddyList)
         {
@@ -170,7 +189,6 @@ public class PlayerBehaviour : Character {
 
                 if(distanceFromPlayer < shortestDistance)
                 {
-                    Debug.Log("New close buddy found");
                     shortestDistance = distanceFromPlayer;
                     buddyToHold = buddy;
                 }

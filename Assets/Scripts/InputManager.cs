@@ -64,7 +64,6 @@ public class InputManager : MonoBehaviour {
                 // Start Holding logic
                 _player.TryStartHoldBuddy();
             }
-            
         }
     }
 

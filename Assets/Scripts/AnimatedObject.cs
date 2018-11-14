@@ -100,7 +100,7 @@ public class AnimatedObject : ActivableObject {
         base.Deactivate();
 
         // Do not interrupt the "door open" animation
-        if (_animated)
+        if (_animated && !_disableParentsOnActivation)
         {
             Debug.Log("Swap anims !!!");
             _anim.SetTrigger(_animSwapToDeactivated);

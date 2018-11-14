@@ -322,7 +322,6 @@ public class BuddyBehaviour : Character {
     /// <param name="changeState"></param>
     private void EndThrow(bool changeState = true, bool _activateNavagent = true)
     {
-        Debug.Log("Buddy : End throw");
         _navAgent.enabled = _activateNavagent;
         _rigidBody.drag = _tempDrag;
 
@@ -378,7 +377,6 @@ public class BuddyBehaviour : Character {
     {
         if (_state == BuddyStates.Normal)
         {
-            Debug.Log("Start Holding buddy");
             ChangeBuddyState(BuddyStates.Held);
             SetBuddyStopped(true);
             _navAgent.enabled = false;
@@ -413,6 +411,7 @@ public class BuddyBehaviour : Character {
     public override void StartFollowBlockMovement()
     {
         base.StartFollowBlockMovement();
+        Debug.Log("OOOOOOOOOO ok disabled 1");
         _navAgent.enabled = false;
     }
 

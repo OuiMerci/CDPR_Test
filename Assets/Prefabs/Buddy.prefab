@@ -1205,7 +1205,7 @@ BoxCollider:
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
-  m_Size: {x: 20, y: 2, z: 20}
+  m_Size: {x: 8, y: 2, z: 8}
   m_Center: {x: 0, y: 1, z: 0}
 --- !u!95 &95656638830952780
 Animator:
@@ -1256,7 +1256,7 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 203063
   _renderer: {fileID: 137034528056613088}
-  _playerFollowStopDistance: 1.5
+  _playerFollowStopDistance: 3
   _tempDrag: 2
 --- !u!136 &136292727631990300
 CapsuleCollider:
@@ -1353,7 +1353,7 @@ NavMeshAgent:
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 500
-  m_StoppingDistance: 0.3
+  m_StoppingDistance: 1
   m_AutoTraverseOffMeshLink: 1
   m_AutoBraking: 1
   m_AutoRepath: 1

@@ -5,29 +5,33 @@ using UnityEngine;
 public class LaserPointer : MonoBehaviour {
 
     #region Fields
+    [SerializeField] private GameObject _laserDisplay;
     private Light _light;
+    private PlayerBehaviour _player;
     #endregion
 
     #region Methods
     // Use this for initialization
     void Start () {
         _light = GetComponent<Light>();
-        EnableLight(false);
-	}
+        _player = PlayerBehaviour.Instance;
+        ShowLaser(false);
+    }
 
     private void OnEnable()
     {
-        EventManager.OnLaserStateToggle += EnableLight;
+        EventManager.OnLaserStateToggle += ShowLaser;
     }
 
     private void OnDisable()
     {
-        EventManager.OnLaserStateToggle -= EnableLight;
+        EventManager.OnLaserStateToggle -= ShowLaser;
     }
 
-    private void EnableLight(bool isOn)
+    private void ShowLaser(bool isOn)
     {
-        _light.enabled = isOn;
+        //_light.enabled = isOn;
+        _player.LaserDisplaySphere.SetActive(isOn);
     }
     #endregion
 }

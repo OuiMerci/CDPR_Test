@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour {
     [SerializeField] private GameObject _buddyPrefab;
     const float MAX_RAYCAST_DISTANCE_VALUE = 100;
     static private GameManager _instance;
-    private int _activeRoomIndex;
+    [SerializeField]  private int _activeRoomIndex;
     #endregion
 
     #region Property
@@ -81,11 +81,17 @@ public class GameManager : MonoBehaviour {
     public void SetActiveRoom(int roomIndex)
     {
         _activeRoomIndex = roomIndex;
+
+        //if(roomIndex - 1 >= 0)
+        //{
+        //    _roomList[roomIndex - 1].gameObject.SetActive(false);
+        //}
     }
 
     public void TeleportToRoom(int roomIndex)
     {
         Debug.Log("Teleporting to room : " + roomIndex);
+        _activeRoomIndex = roomIndex;
         _roomList[roomIndex].TeleportCharacters();
     }
 

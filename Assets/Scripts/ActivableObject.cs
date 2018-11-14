@@ -4,7 +4,9 @@ using System.Collections;
 public abstract class ActivableObject : MonoBehaviour
 {
     #region Fields
-    [SerializeField] protected ActivableObject[] _linkedObjects;
+    [SerializeField] protected ActivableObject[] _linkedObjects;  //List of the objects that will be activated by this one
+    [SerializeField] protected bool _disableParentsOnActivation;
+    [SerializeField] protected ActivableObject[] _parentObjects; //List of the objects that activate this one
     [SerializeField] protected bool _activated;
     [SerializeField] protected int _activationPointNeeded;
     [SerializeField] protected int _activationPoints;
@@ -91,6 +93,14 @@ public abstract class ActivableObject : MonoBehaviour
         if(_linkedObjects.Length > 0)
         {
             UpdateLinkedObjects(+1);
+        }
+
+        if (_disableParentsOnActivation)
+        {
+            foreach(ActivableObject parent in _parentObjects)
+            {
+                parent.gameObject.SetActive(false);
+            }
         }
     }
 

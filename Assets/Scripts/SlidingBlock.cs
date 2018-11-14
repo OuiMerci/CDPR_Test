@@ -8,6 +8,7 @@ public class SlidingBlock : ActivableObject {
     [SerializeField] private float _upLimit;
     [SerializeField] private float _downLimit;
     [SerializeField] private float _speed;
+    [SerializeField] private bool _goUpOnActivation;
 
     private Rigidbody _rigidbody;
     public List<Character> _charactersOnTop;
@@ -16,7 +17,14 @@ public class SlidingBlock : ActivableObject {
     public bool _moving;
     #endregion
 
-    #region Fields
+    #region Properties
+    public List<Character> CharactersOnTop
+    {
+        get { return _charactersOnTop; }
+    }
+    #endregion
+
+    #region methods
     // Use this for initialization
     void Start () {
         _charactersOnTop = new List<Character>();
@@ -105,22 +113,25 @@ public class SlidingBlock : ActivableObject {
     {
         _moving = false;
 
-        foreach (Character character in _charactersOnTop)
+        if(up == false)
         {
-            character.EndFollowBlockMovement();
+            foreach (Character character in _charactersOnTop)
+            {
+                character.EndFollowBlockMovement();
+            }
         }
     }
 
     public override void Activate()
     {
         base.Activate();
-        StartMoving(true);
+        StartMoving(_goUpOnActivation);
     }
 
     public override void Deactivate()
     {
         base.Deactivate();
-        StartMoving(false);
+        StartMoving(!_goUpOnActivation);
     }
     #endregion
 }
