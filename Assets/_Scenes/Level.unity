@@ -16428,6 +16428,11 @@ Prefab:
       propertyPath: m_Size.z
       value: 15
       objectReference: {fileID: 0}
+    - target: {fileID: 137034528056613088, guid: 57245811cd29ba941885fddbd40ead82,
+        type: 2}
+      propertyPath: m_Materials.Array.data[0]
+      value: 
+      objectReference: {fileID: 2100000, guid: 6059b61b7e61984488b2df8fc77ccb2e, type: 2}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 57245811cd29ba941885fddbd40ead82, type: 2}
   m_IsPrefabAsset: 0
@@ -22100,7 +22105,7 @@ Prefab:
         type: 2}
       propertyPath: m_Materials.Array.data[0]
       value: 
-      objectReference: {fileID: 2100000, guid: 4e1de343b99fc634c825bada3b854743, type: 2}
+      objectReference: {fileID: 2100000, guid: 6059b61b7e61984488b2df8fc77ccb2e, type: 2}
     - target: {fileID: 65401488539615414, guid: 57245811cd29ba941885fddbd40ead82,
         type: 2}
       propertyPath: m_Size.x
