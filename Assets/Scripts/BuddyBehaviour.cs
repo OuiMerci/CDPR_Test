@@ -411,7 +411,6 @@ public class BuddyBehaviour : Character {
     public override void StartFollowBlockMovement()
     {
         base.StartFollowBlockMovement();
-        Debug.Log("OOOOOOOOOO ok disabled 1");
         _navAgent.enabled = false;
     }
 
