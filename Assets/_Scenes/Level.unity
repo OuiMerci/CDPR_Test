@@ -3421,7 +3421,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4984224881602478, guid: d94769305f4cebf4f8c2953629336573, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 135
+      value: 136
       objectReference: {fileID: 0}
     - target: {fileID: 114503583669902414, guid: d94769305f4cebf4f8c2953629336573,
         type: 2}
@@ -6690,7 +6690,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4984224881602478, guid: d94769305f4cebf4f8c2953629336573, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 127
+      value: 128
       objectReference: {fileID: 0}
     - target: {fileID: 114503583669902414, guid: d94769305f4cebf4f8c2953629336573,
         type: 2}
@@ -21725,7 +21725,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4984224881602478, guid: d94769305f4cebf4f8c2953629336573, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 119
+      value: 120
       objectReference: {fileID: 0}
     - target: {fileID: 114503583669902414, guid: d94769305f4cebf4f8c2953629336573,
         type: 2}
@@ -25560,7 +25560,7 @@ MonoBehaviour:
   - {fileID: 1761173574}
   _disableParentsOnActivation: 0
   _parentObjects: []
-  _activated: 1
+  _activated: 0
   _activationPointNeeded: 1
   _activationPoints: 0
   _disableOnActivation: 0
@@ -25939,12 +25939,12 @@ Prefab:
     - target: {fileID: 114503583669902414, guid: d94769305f4cebf4f8c2953629336573,
         type: 2}
       propertyPath: _activationPoints
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114503583669902414, guid: d94769305f4cebf4f8c2953629336573,
         type: 2}
       propertyPath: _activated
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 114503583669902414, guid: d94769305f4cebf4f8c2953629336573,
         type: 2}
